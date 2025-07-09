@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    height: 100vh;
+    background-size: cover;
+    background-image: url('../images/wallpaper.jpg');
+    font-family: Arial, sans-serif;
+}
+
+.icon, .logout-icon {
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.icon img, .logout-icon img {
+    width: 80px;
+    height: 80px;
+}
+
+.icon p, .logout-icon p {
+    margin: 5px;
+    font-size: 14px;
+}
+
+.perfil-container {
+    position: relative;
+    display: inline-block;
+}
+
+.foto-perfil {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.foto-perfil:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: #2c2c2c;
+    border-radius: 8px;
+    padding: 15px;
+    width: 380px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 100;
+}
+
+.dropdown .topo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.dropdown .email {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.dropdown .foto-grande {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+}
+
+.dropdown .nome {
+    font-weight: bold;
+    font-size: 22px;
+    color: #fff;
+}
+
+.botoes {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    background: #2c2c2c;
+    padding: 4px;
+    border-radius: 24px;
+    height: 60px;
+}
+
+.botoes button {
+    background: #1b1b1b;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.botoes button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-esquerda {
+    border-radius: 20px 0 0 20px;
+    width: calc(100% / 2);
+}
+
+.btn-direita {
+    border-radius: 0 20px 20px 0;
+    width: calc(100% / 2);
+}
+
+.icone {
+    margin-right: 6px;
+    font-size: 16px;
+}
