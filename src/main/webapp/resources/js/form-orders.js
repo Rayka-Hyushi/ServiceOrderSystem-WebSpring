@@ -10,7 +10,7 @@ document.getElementById('btnAdicionarServico')?.addEventListener('click', () => 
     const option = select.options[select.selectedIndex];
     const id = option.value;
     const nome = option.text;
-    const preco = parseFloat(option.getAttribute('data-preco'));
+    const preco = parseFloat(option.getAttribute('data-valor'));
 
     if (!servicosSelecionados.find(s => s.id === id)) {
         servicosSelecionados.push({ id, nome, preco });

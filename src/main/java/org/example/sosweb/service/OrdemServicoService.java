@@ -63,10 +63,10 @@ public class OrdemServicoService {
         return servicos;
     }
 
-    public void delete(int id) {
-        ordemServicoRepository.findById(id).ifPresent(ordem -> {
-            relacaoOrdemServicoRepository.deleteByOrdemServico(ordem);
+    public void delete(Integer osid, Usuario usuario) {
+        Optional<Object> ordem = ordemServicoRepository.findByOsidAndUsuario(osid, usuario);
+        if (ordem.isPresent()) {
             ordemServicoRepository.delete(ordem);
-        });
+        }
     }
 }

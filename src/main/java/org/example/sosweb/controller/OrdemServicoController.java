@@ -54,11 +54,11 @@ public class OrdemServicoController {
                 model.addAttribute("servicosSelecionados", ordemServicoService.getServicosDaOrdem(ordem.get(), usuario));
             }
         } else if ("excluir".equals(action) && id != null) {
-            ordemServicoService.delete(id); // Por enquanto, sem validação de serviços associados
+            ordemServicoService.delete(id, usuario); // Por enquanto, sem validação de serviços associados
         }
 
         model.addAttribute("ordens", ordemServicoService.read(usuario));
-        model.addAttribute("servicos", ordemServicoService.read(usuario));
+        model.addAttribute("servicos", servicoService.read(usuario.getId()));
         return "ordens";
     }
 
