@@ -64,9 +64,9 @@ public class OrdemServicoService {
     }
 
     public void delete(Integer osid, Usuario usuario) {
-        Optional<Object> ordem = ordemServicoRepository.findByOsidAndUsuario(osid, usuario);
-        if (ordem.isPresent()) {
-            ordemServicoRepository.delete(ordem);
+        Optional<OrdemServico> ordem = ordemServicoRepository.findByOsidAndUsuario(osid, usuario);
+        if (ordem.isPresent() && ordem.get().getUsuario().getId() == usuario.getId()) {
+            ordemServicoRepository.delete(ordem.get());
         }
     }
 }

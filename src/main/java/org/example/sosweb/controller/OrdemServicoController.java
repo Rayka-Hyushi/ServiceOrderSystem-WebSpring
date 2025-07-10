@@ -32,6 +32,7 @@ public class OrdemServicoController {
     @GetMapping
     public String listarOrdens(@RequestParam(value = "action", required = false) String action,
                                @RequestParam(value = "id", required = false) Integer id,
+                               @RequestParam(value = "idcliente", required = false) Integer idcliente,
                                Model model,
                                HttpSession session) {
         if (session.getAttribute("usuario") == null) {
@@ -46,6 +47,10 @@ public class OrdemServicoController {
             Optional<OrdemServico> ordem = ordemServicoService.findById(id);
             if (ordem.isPresent()) {
                 ArrayList<Servico> servicos = (ArrayList<Servico>) servicoService.read(usuario.getId());
+                Optional<Cliente> buscaCliente = clienteService.findById(idcliente, usuario);
+                Cliente cliente = null;
+                if (buscaCliente.isPresent()) cliente = buscaCliente.get();
+                model.addAttribute("cliente", cliente);
                 model.addAttribute("servicos", servicos);
                 model.addAttribute("ordemEdit", ordem.get());
                 model.addAttribute("modo", "editar");
@@ -58,7 +63,6 @@ public class OrdemServicoController {
         }
 
         model.addAttribute("ordens", ordemServicoService.read(usuario));
-        model.addAttribute("servicos", servicoService.read(usuario.getId()));
         return "ordens";
     }
 
@@ -66,8 +70,12 @@ public class OrdemServicoController {
     public String salvar(@RequestParam String modo,
                          @RequestParam Integer idcliente,
                          @RequestParam String descricao,
-                         @RequestParam(value = "id", required = false) Integer id,
-                         @RequestParam(value = "servicos", required = false) List<Servico> servicos,
+                         @RequestParam(value = "osid", required = false) Integer osid, // Mude 'id' para 'osid' para ser consistente com o input hidden
+                         @RequestParam(value = "servicosIds", required = false) List<Integer> servicosIds, // Nova param para os IDs dos serviços
+                         @RequestParam(value = "desconto", required = false, defaultValue = "0.00") BigDecimal desconto, // Capturar desconto
+                         @RequestParam(value = "extras", required = false, defaultValue = "0.00") BigDecimal extras,     // Capturar extras
+                         @RequestParam(value = "total", required = false, defaultValue = "0.00") BigDecimal total,       // Capturar total
+                         @RequestParam(value = "status", required = false) String status, // Capturar status
                          HttpSession session) {
         if (session.getAttribute("usuario") == null) {
             return "redirect:/";
@@ -77,21 +85,36 @@ public class OrdemServicoController {
 
         OrdemServico ordem = new OrdemServico();
         ordem.setDescricao(descricao);
-        ordem.setTotal(BigDecimal.ZERO);
-        ordem.setDesconto(BigDecimal.ZERO);
-        ordem.setExtras(BigDecimal.ZERO);
-        ordem.setStatus("Pendente");
         ordem.setUsuario(usuario);
+        ordem.setDesconto(desconto);
+        ordem.setExtras(extras);
+        ordem.setTotal(total);
+        ordem.setStatus(status != null ? status : "Pendente"); // Se status não vier, define como Pendente
+
+
         Optional<Cliente> cliente = clienteService.findById(idcliente, usuario);
-        if (cliente.isPresent()) {
+        if (cliente.isPresent() && cliente.get().getUsuario().getId() == usuario.getId()) {
             ordem.setCliente(cliente.get());
         }
 
-        if ("editar".equals(modo) && id != null) {
-            ordem.setOsid(id);
+        if ("editar".equals(modo) && osid != null) {
+            ordem.setOsid(osid); // Use osid
         }
 
-        ordemServicoService.save(ordem, servicos); // salva OS e associa serviços (ou não)
+        // Converta os servicosIds de volta para objetos Servico
+        ArrayList<Servico> servicosParaSalvar = new ArrayList<>();
+        if (servicosIds != null && !servicosIds.isEmpty()) {
+            for (Integer servicoId : servicosIds) {
+                servicoService.findById(servicoId, usuario).ifPresent(servicoParaSalvar -> {
+                    // Verifique se o serviço pertence ao usuário logado, se necessário
+                    if (servicoParaSalvar.getUsuario().getId() == usuario.getId()) {
+                        servicosParaSalvar.add(servicoParaSalvar);
+                    }
+                });
+            }
+        }
+
+        ordemServicoService.save(ordem, servicosParaSalvar); // salva OS e associa serviços
         return "redirect:/ordens";
     }
 }

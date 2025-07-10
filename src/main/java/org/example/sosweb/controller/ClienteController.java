@@ -40,7 +40,7 @@ public class ClienteController {
             clienteService.delete(id, usuario);
         }
 
-        ArrayList<Cliente> clientes = clienteService.read(usuario.getId());
+        ArrayList<Cliente> clientes = (ArrayList<Cliente>) clienteService.read(usuario.getId());
         model.addAttribute("clientes", clientes);
         return "clientes";
     }

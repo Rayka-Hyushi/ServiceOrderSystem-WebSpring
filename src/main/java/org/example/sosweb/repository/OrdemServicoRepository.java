@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Integer> {
     List<OrdemServico> findByUsuarioId(int idusuario);
     
-    Optional<Object> findByOsidAndUsuario(int osid, Usuario usuario);
+    Optional<OrdemServico> findByOsidAndUsuario(int osid, Usuario usuario);
 }

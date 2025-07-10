@@ -6,7 +6,7 @@ import org.example.sosweb.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +22,7 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public ArrayList<Cliente> read(Integer idusuario) {
+    public List<Cliente> read(Integer idusuario) {
         return clienteRepository.findAllByIdusuario(idusuario);
     }
 

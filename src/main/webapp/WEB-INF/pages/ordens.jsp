@@ -9,7 +9,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Service Order System</title>
+        <title>Service Order System - Ordens de Serviço</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/style.css">
     </head>
@@ -50,12 +50,12 @@
                                         <td>${ordem.osid}</td>
                                         <td>${ordem.cliente.nome}</td>
                                         <td>${ordem.descricao}</td>
-                                        <td>${ordem.extras}</td>
                                         <td>${ordem.desconto}</td>
+                                        <td>${ordem.extras}</td>
                                         <td>${ordem.total}</td>
                                         <td>${ordem.status}</td>
                                         <td>
-                                            <a href="ordens?action=editar&id=${ordem.osid}" class="btn btn-sm btn-warning">Editar</a>
+                                            <a href="ordens?action=editar&id=${ordem.osid}&idcliente=${ordem.cliente.idcliente}" class="btn btn-sm btn-warning">Editar</a>
                                             <a href="ordens?action=excluir&id=${ordem.osid}" class="btn btn-sm btn-danger">Excluir</a>
                                         </td>
                                     </tr>
@@ -84,30 +84,49 @@
                             </c:if>
 
                             <!-- Cliente -->
-                            <div class="mb-3">
-                                <label class="form-label">Cliente</label>
-                                <select class="form-control" name="idcliente">
-                                <c:forEach var="c" items="${clientes}">
-                                        <option value="${c.idcliente}"
-                                                <c:if test="${not empty ordemEdit && c.idcliente == ordemEdit.cliente.idcliente}">
-                                                    selected
-                                                </c:if>>
-                                                ${c.nome}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+                            <c:if test="${modo == 'novo'}">
+                                <div class="mb-3">
+                                    <select class="form-control" name="idcliente">
+                                        <c:forEach var="c" items="${clientes}">
+                                            <option value="${c.idcliente}"
+                                                    <c:if test="${not empty ordemEdit && c.idcliente == ordemEdit.cliente.idcliente}">
+                                                        selected
+                                                    </c:if>>
+                                                    ${c.nome}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </c:if>
+                            <c:if test="${modo == 'editar'}">
+                                <div class="mb-3">
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Cliente</strong></label>
+                                        <c:if test="${not empty ordemEdit && not empty ordemEdit.cliente}">
+                                            <div class="form-control-plaintext">
+                                                <strong>Idcliente:</strong> <c:out value="${ordemEdit.cliente.idcliente}" /> <br>
+                                                <strong>Nome:</strong> <c:out value="${ordemEdit.cliente.nome}" /> <br>
+                                                <strong>E-mail:</strong> <c:out value="${ordemEdit.cliente.email}" /> <br>
+                                                <strong>Telefone:</strong> <c:out value="${ordemEdit.cliente.telefone}" />
+                                            </div>
+                                        </c:if>
+                                        <c:if test="${empty ordemEdit || empty ordemEdit.cliente}">
+                                            <p class="form-control-plaintext text-muted">Cliente não associado ou não encontrado.</p>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </c:if>
 
                             <!-- Descrição -->
                             <div class="mb-3">
-                                <label class="form-label">Descrição</label>
+                                <label class="form-label"><strong>Descrição</strong></label>
                                 <textarea class="form-control" name="descricao" required><c:out value='${ordemEdit.descricao}'/></textarea>
                             </div>
 
                             <!-- Status -->
                             <c:if test="${modo == 'editar'}">
                                 <div class="mb-3">
-                                    <label class="form-label">Status</label>
+                                    <label class="form-label"><strong>Status</strong></label>
                                     <select name="status" class="form-control">
                                         <option value="Pendente" <c:if test="${ordemEdit.status == 'Pendente'}">selected</c:if>>Pendente</option>
                                         <option value="Finalizado" <c:if test="${ordemEdit.status == 'Finalizado'}">selected</c:if>>Finalizado</option>
@@ -118,7 +137,7 @@
                             <!-- Serviços -->
                             <c:if test="${modo == 'editar'}">
                                 <div class="mb-3">
-                                    <label class="form-label">Serviços</label>
+                                    <label class="form-label"><strong>Serviços</strong></label>
                                     <div class="input-group">
                                         <select id="selectServico" class="form-control">
                                             <c:forEach var="s" items="${servicos}">
@@ -134,15 +153,15 @@
                                 </ul>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Desconto</label>
+                                    <label class="form-label"><strong>Desconto</strong></label>
                                     <input type="number" step="0.01" name="desconto" class="form-control" value="${ordemEdit.desconto}" id="campoDesconto">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Extras</label>
+                                    <label class="form-label"><strong>Extras</strong></label>
                                     <input type="number" step="0.01" name="extras" class="form-control" value="${ordemEdit.extras}" id="campoExtras">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Total</label>
+                                    <label class="form-label"><strong>Total</strong></label>
                                     <input type="number" step="0.01" name="total" class="form-control" id="campoTotal" value="${ordemEdit.total}" readonly>
                                 </div>
                             </c:if>
@@ -164,45 +183,15 @@
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-        <script>
-            const servicosSelecionados = [];
-
-            <c:forEach var="s" items="${servicosSelecionados}">
-            servicosSelecionados.push({
-                id: '${s.idservico}',
-                nome: '${s.nome} - R$ ${s.valor}',
-                valor: parseFloat('${s.valor}')
-            });
-            </c:forEach>
-
-            window.addEventListener('DOMContentLoaded', () => {
-                const lista = document.getElementById('listaServicos');
-                servicosSelecionados.forEach(servico => {
-                    const item = document.createElement('li');
-                    item.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    item.textContent = servico.nome;
-
-                    const btn = document.createElement('button');
-                    btn.className = 'btn btn-sm btn-danger';
-                    btn.textContent = 'Remover';
-                    btn.onclick = () => {
-                        lista.removeChild(item);
-                        servicosSelecionados.splice(servicosSelecionados.findIndex(s => s.id === servico.id), 1);
-                        atualizarTotal();
-                    };
-
-                    const inputHidden = document.createElement('input');
-                    inputHidden.type = 'hidden';
-                    inputHidden.name = 'servicosIds';
-                    inputHidden.value = servico.id;
-                    item.appendChild(inputHidden);
-                    item.appendChild(btn);
-                    lista.appendChild(item);
-                });
-
-                atualizarTotal();
-            });
-        </script>
         <script src="${pageContext.request.contextPath}/resources/js/form-orders.js"></script>
+        <script>
+            <c:forEach var="s" items="${servicosSelecionados}">
+                servicosSelecionados.push({
+                    id: '${s.idservico}',
+                    nome: '${s.nome} - R$ ${s.valor}',
+                    valor: parseFloat('${s.valor}')
+                });
+            </c:forEach>
+        </script>
     </body>
 </html>

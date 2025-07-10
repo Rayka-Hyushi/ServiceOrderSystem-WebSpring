@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface RelacaoOrdemServicoRepository extends JpaRepository<RelacaoOrdemServico, Integer> {
     List<RelacaoOrdemServico> findByOrdemServico(OrdemServico ordemServico);
+
     void deleteByOrdemServico(OrdemServico ordemServico);
 }
